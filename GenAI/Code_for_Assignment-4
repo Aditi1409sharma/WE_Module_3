@@ -1,0 +1,32 @@
+import random
+
+def generate(filename: str, start_words: list[str], chain_length: int, num_generated: int) -> str:
+    with open(filename, 'r', encoding='utf-8') as file:
+        text = file.read()
+
+    words = text.split()
+    chains = {}
+
+    for i in range(len(words) - chain_length):
+        key = tuple(words[i:i + chain_length])
+        value = words[i + chain_length]
+        if key in chains:
+            chains[key].append(value)
+        else:
+            chains[key] = [value]
+
+    current_words = start_words.copy()
+    result = ' '.join(current_words)
+
+    for _ in range(num_generated):
+        key = tuple(current_words)
+        if key in chains:
+            next_word = random.choice(chains[key])
+            result += ' ' + next_word
+            current_words = current_words[1:] + [next_word]
+        else:
+            break
+
+    return result
+
+
